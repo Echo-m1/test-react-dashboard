@@ -38,7 +38,7 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       
-      'react/jsx-max-props-per-line': ['error', { maximum: 1, when: 'multiline' }],
+      'react/jsx-max-props-per-line': ['error', { maximum: 1 }],
       'react/jsx-first-prop-new-line': ['error', 'multiline'],
       'react/jsx-closing-bracket-location': ['error', 'tag-aligned'],
       'react/jsx-closing-tag-location': 'error',
@@ -91,7 +91,7 @@ export default [
   {
     files: ['**/*.{js,jsx}'],
     rules: {
-      'react/jsx-max-props-per-line': ['error', { maximum: 1, when: 'multiline' }],
+      'react/jsx-max-props-per-line': ['error', { maximum: 1 }],
       'react/jsx-first-prop-new-line': ['error', 'multiline'],
       'react/jsx-closing-bracket-location': ['error', 'tag-aligned'],
       'react/jsx-indent': ['error', 2],

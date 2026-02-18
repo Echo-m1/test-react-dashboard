@@ -6,5 +6,5 @@
   "printWidth": 80,
   "arrowParens": "avoid",
   "endOfLine": "lf",
-  "singleAttributePerLine": true
+  "singleAttributePerLine": false
 }
