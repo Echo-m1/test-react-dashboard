@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  age: null,
+  ageFrom: null,
+  ageTo: null,
   city: '',
   gender: '',
 }
@@ -10,8 +11,11 @@ const filtersSlice = createSlice({
   name: 'filters',
   initialState,
   reducers: {
-    setAgeFilter: (state, action) => {
-      state.age = action.payload
+    setAgeFromFilter: (state, action) => {
+      state.ageFrom = action.payload
+    },
+    setAgeToFilter: (state, action) => {
+      state.ageTo = action.payload
     },
     setCityFilter: (state, action) => {
       state.city = action.payload
@@ -20,12 +24,13 @@ const filtersSlice = createSlice({
       state.gender = action.payload
     },
     resetFilters: (state) => {
-      state.age = null
+      state.ageFrom = null
+      state.ageTo = null
       state.city = ''
       state.gender = ''
     },
   },
 })
 
-export const { setAgeFilter, setCityFilter, setGenderFilter, resetFilters } = filtersSlice.actions
+export const { setAgeFromFilter, setAgeToFilter, setCityFilter, setGenderFilter, resetFilters } = filtersSlice.actions
 export default filtersSlice.reducer
