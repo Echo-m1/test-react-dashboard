@@ -13,10 +13,11 @@ export {
 export { filterPeople, getUniqueCities, getUniqueAges, hasActiveFilters, sortPeople } from './filterHelpers'
 
 export {
-  PERSON_SCHEMA,
-  FAMILY_MEMBER_SCHEMA,
-  EDUCATION_SCHEMA,
-  ADDRESS_SCHEMA,
-  DOCUMENT_SCHEMA,
-  PASSPORT_SCHEMA,
+  createPersonSchema,
+  createFamilyMemberSchema,
+  createEducationSchema,
+  createAddressSchema,
+  createDocumentSchema,
+  createPassportSchema,
+  createRequestSchema,
 } from './personSchema'

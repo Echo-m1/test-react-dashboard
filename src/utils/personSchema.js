@@ -13,7 +13,7 @@
  * @property {string} street - Улица (text input)
  * @property {string} building - Дом (text input)
  * @property {string} apartment - Квартира (text input)
- * @property {number} postalCode - Почтовый индекс (number input)
+ * @property {number|null} postalCode - Почтовый индекс (number input, пустое — null)
  * @property {boolean} isMarried - Состоит в браке (checkbox)
  * @property {boolean} hasChildren - Есть дети (checkbox)
  * @property {boolean} isActive - Активен (checkbox)
@@ -24,8 +24,17 @@
  * @property {Array<Address>} addresses - Массив адресов (один ко многим)
  * @property {Array<Document>} documents - Массив документов (один ко многим)
  * @property {Passport} passport - Паспортные данные (объект)
+ * @property {Array<Request>} requests - Заявки в отдел кадров (для дашборда)
  * @property {string} createdAt - Дата создания в формате ISO (date)
  * @property {string} updatedAt - Дата обновления в формате ISO (date)
+ */
+
+/**
+ * Заявка (для агрегатов дашборда)
+ * @typedef {Object} Request
+ * @property {string} id - Уникальный идентификатор
+ * @property {string} status - Статус (REQUEST_STATUSES: pending, approved, rejected, completed)
+ * @property {string} createdAt - Дата создания в формате ISO
  */
 
 /**
@@ -65,7 +74,7 @@
  * @property {string} street - Улица (text input)
  * @property {string} building - Дом (text input)
  * @property {string} apartment - Квартира (text input)
- * @property {number} postalCode - Почтовый индекс (number input)
+ * @property {number|null} postalCode - Почтовый индекс (number input, пустое — null)
  * @property {string} startDate - Дата начала регистрации в формате ISO (date input)
  * @property {string} endDate - Дата окончания регистрации в формате ISO (date input, nullable)
  * @property {boolean} isCurrent - Текущий адрес (checkbox)
@@ -98,39 +107,12 @@
  * @property {string} registrationAddress - Адрес регистрации (textarea)
  */
 
-export const PERSON_SCHEMA = {
-  id: '',
-  firstName: '',
-  lastName: '',
-  middleName: '',
-
-  birthDate: '',
-
-  gender: '',
-
-  phone: '',
-  email: '',
-
-  city: '',
-  street: '',
-  building: '',
-  apartment: '',
-  postalCode: null,
-
-  // Checkboxes
-  isMarried: false,
-  hasChildren: false,
-  isActive: true,
-
-  notes: '',
-  description: '',
-
-  family: [],
-  education: [],
-  addresses: [],
-  documents: [],
-
-  passport: {
+/**
+ * Создаёт новый объект паспортных данных по умолчанию
+ * @returns {Passport}
+ */
+export function createPassportSchema() {
+  return {
     series: '',
     number: '',
     issueDate: '',
@@ -138,68 +120,126 @@ export const PERSON_SCHEMA = {
     issuedByCode: '',
     placeOfBirth: '',
     registrationAddress: '',
-  },
-
-  createdAt: '',
-  updatedAt: '',
+  }
 }
 
-export const FAMILY_MEMBER_SCHEMA = {
-  id: '',
-  relationType: '',
-  firstName: '',
-  lastName: '',
-  middleName: '',
-  birthDate: '',
-  phone: '',
-  notes: '',
+/**
+ * Создаёт новый объект заявки по умолчанию
+ * @returns {Request}
+ */
+export function createRequestSchema() {
+  return {
+    id: '',
+    status: '',
+    createdAt: '',
+  }
 }
 
-export const EDUCATION_SCHEMA = {
-  id: '',
-  type: '',
-  institution: '',
-  faculty: '',
-  specialty: '',
-  startDate: '',
-  endDate: '',
-  isCompleted: false,
-  diplomaNumber: '',
-  notes: '',
+/**
+ * Создаёт новый объект человека по умолчанию
+ * @returns {Person}
+ */
+export function createPersonSchema() {
+  return {
+    id: '',
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    birthDate: '',
+    gender: '',
+    phone: '',
+    email: '',
+    city: '',
+    street: '',
+    building: '',
+    apartment: '',
+    postalCode: null,
+    isMarried: false,
+    hasChildren: false,
+    isActive: true,
+    notes: '',
+    description: '',
+    family: [],
+    education: [],
+    addresses: [],
+    documents: [],
+    requests: [],
+    passport: createPassportSchema(),
+    createdAt: '',
+    updatedAt: '',
+  }
 }
 
-export const ADDRESS_SCHEMA = {
-  id: '',
-  type: '',
-  city: '',
-  street: '',
-  building: '',
-  apartment: '',
-  postalCode: null,
-  startDate: '',
-  endDate: null,
-  isCurrent: false,
-  notes: '',
+/**
+ * Создаёт новый объект родственника по умолчанию
+ * @returns {FamilyMember}
+ */
+export function createFamilyMemberSchema() {
+  return {
+    id: '',
+    relationType: '',
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    birthDate: '',
+    phone: '',
+    notes: '',
+  }
 }
 
-export const DOCUMENT_SCHEMA = {
-  id: '',
-  type: '',
-  series: '',
-  number: '',
-  issueDate: '',
-  issuedBy: '',
-  expiryDate: null,
-  isActive: true,
-  notes: '',
+/**
+ * Создаёт новый объект образования по умолчанию
+ * @returns {Education}
+ */
+export function createEducationSchema() {
+  return {
+    id: '',
+    type: '',
+    institution: '',
+    faculty: '',
+    specialty: '',
+    startDate: '',
+    endDate: '',
+    isCompleted: false,
+    diplomaNumber: '',
+    notes: '',
+  }
 }
 
-export const PASSPORT_SCHEMA = {
-  series: '',
-  number: '',
-  issueDate: '',
-  issuedBy: '',
-  issuedByCode: '',
-  placeOfBirth: '',
-  registrationAddress: '',
+/**
+ * Создаёт новый объект адреса по умолчанию
+ * @returns {Address}
+ */
+export function createAddressSchema() {
+  return {
+    id: '',
+    type: '',
+    city: '',
+    street: '',
+    building: '',
+    apartment: '',
+    postalCode: null,
+    startDate: '',
+    endDate: null,
+    isCurrent: false,
+    notes: '',
+  }
+}
+
+/**
+ * Создаёт новый объект документа по умолчанию
+ * @returns {Document}
+ */
+export function createDocumentSchema() {
+  return {
+    id: '',
+    type: '',
+    series: '',
+    number: '',
+    issueDate: '',
+    issuedBy: '',
+    expiryDate: null,
+    isActive: true,
+    notes: '',
+  }
 }
