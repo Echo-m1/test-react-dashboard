@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
-import peopleReducer from './slices/peopleSlice'
-import filtersReducer from './slices/filtersSlice'
+import peopleReducer from '@store/slices/peopleSlice'
+import filtersReducer from '@store/slices/filtersSlice'
 
 const store = configureStore({
   reducer: {

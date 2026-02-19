@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit'
-import { filterPeople } from '../../utils/filterHelpers'
+import { filterPeople } from '@utils/filterHelpers'
 
 export const selectPeopleState = (state) => state.people
 export const selectPeopleItems = (state) => state.people?.items ?? []

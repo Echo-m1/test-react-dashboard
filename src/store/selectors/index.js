@@ -6,7 +6,7 @@ export {
   selectSelectedPerson,
   selectFilteredPeople,
   selectFilteredCount,
-} from './peopleSelectors'
+} from '@store/selectors/peopleSelectors'
 
 export {
   selectTotalCount,
@@ -14,4 +14,4 @@ export {
   selectBirthsByYear,
   selectRequestsApprovedOrCompletedCount,
   selectDashboardAggregates,
-} from './dashboardSelectors'
+} from '@store/selectors/dashboardSelectors'

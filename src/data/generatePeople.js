@@ -5,7 +5,7 @@ import {
   DOCUMENT_TYPES,
   ADDRESS_TYPES,
   REQUEST_STATUSES,
-} from '../utils/constants'
+} from '@utils/constants'
 
 const FIRST_NAMES_MALE = [
   'Александр',

@@ -1,4 +1,4 @@
-import { calculateAge } from './dateUtils'
+import { calculateAge } from '@utils/dateUtils'
 
 /**
  * Проверяет, является ли значение валидным (не null, не undefined, не пустая строка)

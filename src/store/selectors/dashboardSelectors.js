@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit'
-import { selectPeopleItems } from './peopleSelectors'
+import { selectPeopleItems } from '@store/selectors/peopleSelectors'
 
 export const selectTotalCount = createSelector([selectPeopleItems], (items) => items.length)
 

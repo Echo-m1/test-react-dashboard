@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Layout from './components/Layout/Layout'
-import Dashboard from './pages/Dashboard/Dashboard'
-import PeopleList from './pages/PeopleList/PeopleList'
-import PersonCard from './pages/PersonCard/PersonCard'
+import Layout from '@components/Layout/Layout'
+import Dashboard from '@pages/Dashboard/Dashboard'
+import PeopleList from '@pages/PeopleList/PeopleList'
+import PersonCard from '@pages/PersonCard/PersonCard'
 
 function App() {
   return (
