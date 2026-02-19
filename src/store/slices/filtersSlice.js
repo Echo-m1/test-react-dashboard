@@ -27,10 +27,5 @@ const filtersSlice = createSlice({
   },
 })
 
-export const {
-  setAgeFilter,
-  setCityFilter,
-  setGenderFilter,
-  resetFilters,
-} = filtersSlice.actions
+export const { setAgeFilter, setCityFilter, setGenderFilter, resetFilters } = filtersSlice.actions
 export default filtersSlice.reducer

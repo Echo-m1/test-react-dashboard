@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -18,6 +17,6 @@ export default defineConfig({
       '@pages': path.resolve(__dirname, './src/pages'),
       '@styles': path.resolve(__dirname, './src/styles'),
       '@public': path.resolve(__dirname, './public'),
-    }
-  }
+    },
+  },
 })
