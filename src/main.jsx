@@ -12,13 +12,13 @@ import App from '@/App.jsx'
 
 function initStore() {
   if (!store.getState().people.items.length) {
-    store.dispatch(setPeople(generatePeople()))
+    store.dispatch(setPeople(generatePeople(100, { min: 50, max: 150 })))
   }
 }
 
+const root = createRoot(document.getElementById('root'))
 initStore()
-
-createRoot(document.getElementById('root')).render(
+root.render(
   <StrictMode>
     <Provider store={store}>
       <ThemeProvider theme={theme}>

@@ -20,8 +20,9 @@ export const selectBirthsByYear = createSelector([selectPeopleItems], (items) =>
   const byYear = {}
   for (const p of items) {
     if (p.birthDate == null) continue
-    const year = String(p.birthDate).slice(0, 4)
-    if (year.length < 4) continue
+    const date = new Date(p.birthDate)
+    if (Number.isNaN(date.getTime())) continue
+    const year = String(date.getFullYear())
     byYear[year] = (byYear[year] ?? 0) + 1
   }
   const sortedYears = Object.keys(byYear).sort((a, b) => Number(a) - Number(b))
@@ -45,12 +46,30 @@ export const selectRequestsApprovedOrCompletedCount = createSelector([selectPeop
   return count
 })
 
+export const selectRequestsByStatus = createSelector([selectPeopleItems], (items) => {
+  const byStatus = { pending: 0, approved: 0, rejected: 0, completed: 0 }
+  for (const p of items) {
+    const requests = p.requests ?? []
+    for (const r of requests) {
+      if (byStatus[r.status] != null) byStatus[r.status] += 1
+    }
+  }
+  return byStatus
+})
+
 export const selectDashboardAggregates = createSelector(
-  [selectTotalCount, selectCountByGender, selectBirthsByYear, selectRequestsApprovedOrCompletedCount],
-  (totalCount, countByGender, birthsByYear, requestsApprovedOrCompletedCount) => ({
+  [
+    selectTotalCount,
+    selectCountByGender,
+    selectBirthsByYear,
+    selectRequestsApprovedOrCompletedCount,
+    selectRequestsByStatus,
+  ],
+  (totalCount, countByGender, birthsByYear, requestsApprovedOrCompletedCount, requestsByStatus) => ({
     totalCount,
     countByGender,
     birthsByYear,
     requestsApprovedOrCompletedCount,
+    requestsByStatus,
   })
 )
