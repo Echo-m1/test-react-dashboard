@@ -1,30 +1,38 @@
-import React from 'react'
-import { Typography, Button, Box } from '@mui/material'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Layout from './components/Layout/Layout'
+import Dashboard from './pages/Dashboard/Dashboard'
+import PeopleList from './pages/PeopleList/PeopleList'
+import PersonCard from './pages/PersonCard/PersonCard'
 
 function App() {
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography
-        variant="h5"
-        color="primary"
-        gutterBottom
-      >
-        Кадры / Техподдержка
-      </Typography>
-      <Typography
-        variant="body1"
-        color="text.secondary"
-        sx={{ mb: 2 }}
-      >
-        Обвязка приложения: MUI тема и провайдер подключены.
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-      >
-        Проверка темы
-      </Button>
-    </Box>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route
+            path="/"
+            element={<Dashboard />}
+          />
+          <Route
+            path="/people"
+            element={<PeopleList />}
+          />
+          <Route
+            path="/person/:id"
+            element={<PersonCard />}
+          />
+          <Route
+            path="*"
+            element={
+              <Navigate
+                to="/"
+                replace
+              />
+            }
+          />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   )
 }
 
