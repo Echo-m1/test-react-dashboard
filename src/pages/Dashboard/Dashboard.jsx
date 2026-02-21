@@ -1,6 +1,13 @@
-import { Box, Typography, Paper } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { Box, Typography, Grid } from '@mui/material'
+import { selectDashboardAggregates } from '@store/selectors/dashboardSelectors'
+import { useDashboardChartsData } from './hooks/useDashboardChartsData'
+import { MetricCards, BirthsByYearChart, GenderDistributionChart, RequestsByStatusChart } from './components'
 
 function Dashboard() {
+  const aggregates = useSelector(selectDashboardAggregates)
+  const { birthsData, genderData, requestsData } = useDashboardChartsData(aggregates)
+
   return (
     <Box
       component="section"
@@ -13,17 +20,16 @@ function Dashboard() {
       >
         Dashboard
       </Typography>
-      <Paper
-        component="section"
-        sx={{ p: 3, mt: 2 }}
+      <Grid
+        container
+        spacing={3}
+        sx={{ mt: 1 }}
       >
-        <Typography
-          variant="body1"
-          color="text.secondary"
-        >
-          Страница Dashboard будет содержать графики и метрики.
-        </Typography>
-      </Paper>
+        <MetricCards aggregates={aggregates} />
+        <BirthsByYearChart data={birthsData} />
+        <GenderDistributionChart data={genderData} />
+        <RequestsByStatusChart data={requestsData} />
+      </Grid>
     </Box>
   )
 }

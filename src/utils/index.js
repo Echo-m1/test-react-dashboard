@@ -1,4 +1,4 @@
-export { formatDate, calculateAge, parseDate, isValidDate, formatDateForInput } from './dateUtils'
+export { formatDate, calculateAge, parseDate, isValidDate, formatDateForInput } from '@utils/dateUtils'
 
 export {
   GENDER_OPTIONS,
@@ -8,15 +8,16 @@ export {
   ADDRESS_TYPES,
   REQUEST_STATUSES,
   FIELD_LABELS,
-} from './constants'
+} from '@utils/constants'
 
-export { filterPeople, getUniqueCities, getUniqueAges, hasActiveFilters, sortPeople } from './filterHelpers'
+export { filterPeople, getUniqueCities, getUniqueAges, hasActiveFilters, sortPeople } from '@utils/filterHelpers'
 
 export {
-  PERSON_SCHEMA,
-  FAMILY_MEMBER_SCHEMA,
-  EDUCATION_SCHEMA,
-  ADDRESS_SCHEMA,
-  DOCUMENT_SCHEMA,
-  PASSPORT_SCHEMA,
-} from './personSchema'
+  createPersonSchema,
+  createFamilyMemberSchema,
+  createEducationSchema,
+  createAddressSchema,
+  createDocumentSchema,
+  createPassportSchema,
+  createRequestSchema,
+} from '@utils/personSchema'

@@ -1,4 +1,4 @@
-import { calculateAge } from './dateUtils'
+import { calculateAge } from '@utils/dateUtils'
 
 /**
  * Проверяет, является ли значение валидным (не null, не undefined, не пустая строка)
@@ -41,9 +41,9 @@ const matchesAgeFilter = (personAge, ageFrom, ageTo) => {
 }
 
 /**
- * Проверяет, соответствует ли город человека фильтру по городу
+ * Проверяет, соответствует ли город человека фильтру по городу (точное совпадение после нормализации).
  * @param {string} personCity - Город человека
- * @param {string} filterCity - Значение фильтра города
+ * @param {string} filterCity - Значение фильтра города (обычно выбор из списка)
  * @returns {boolean} true, если город соответствует фильтру
  */
 const matchesCityFilter = (personCity, filterCity) => {
@@ -51,10 +51,10 @@ const matchesCityFilter = (personCity, filterCity) => {
     return true
   }
 
-  const normalizedPersonCity = (personCity || '').toLowerCase()
+  const normalizedPersonCity = (personCity || '').trim().toLowerCase()
   const normalizedFilterCity = filterCity.trim().toLowerCase()
 
-  return normalizedPersonCity.includes(normalizedFilterCity)
+  return normalizedPersonCity === normalizedFilterCity
 }
 
 /**
@@ -72,6 +72,24 @@ const matchesGenderFilter = (personGender, filterGender) => {
 }
 
 /**
+ * Проверяет, применены ли какие-либо фильтры
+ * @param {Object} filters - Объект с фильтрами
+ * @returns {boolean} true, если хотя бы один фильтр применён
+ */
+export const hasActiveFilters = (filters) => {
+  if (!filters) {
+    return false
+  }
+
+  return (
+    isValidFilterValue(filters.ageFrom) ||
+    isValidFilterValue(filters.ageTo) ||
+    isValidFilterValue(filters.city) ||
+    isValidFilterValue(filters.gender)
+  )
+}
+
+/**
  * Фильтрует массив людей по заданным критериям
  * @param {Array} people - Массив объектов людей
  * @param {Object} filters - Объект с фильтрами { ageFrom, ageTo, city, gender }
@@ -82,7 +100,7 @@ export const filterPeople = (people, filters) => {
     return []
   }
 
-  if (!filters || !Object.keys(filters).length) {
+  if (!filters || !hasActiveFilters(filters)) {
     return people
   }
 
@@ -130,24 +148,6 @@ export const getUniqueAges = (people) => {
   const ages = people.map(({ birthDate }) => calculateAge(birthDate)).filter((age) => age != null)
 
   return [...new Set(ages)].sort((a, b) => a - b)
-}
-
-/**
- * Проверяет, применены ли какие-либо фильтры
- * @param {Object} filters - Объект с фильтрами
- * @returns {boolean} true, если хотя бы один фильтр применён
- */
-export const hasActiveFilters = (filters) => {
-  if (!filters) {
-    return false
-  }
-
-  return (
-    isValidFilterValue(filters.ageFrom) ||
-    isValidFilterValue(filters.ageTo) ||
-    isValidFilterValue(filters.city) ||
-    isValidFilterValue(filters.gender)
-  )
 }
 
 /**
@@ -199,9 +199,6 @@ export const sortPeople = (people, field, direction = 'asc') => {
     return []
   }
 
-  const sorted = [...people].sort((a, b) => {
-    return compareValues(a[field], b[field])
-  })
-
-  return direction === 'desc' ? sorted.reverse() : sorted
+  const sign = direction === 'desc' ? -1 : 1
+  return [...people].sort((a, b) => sign * compareValues(a[field], b[field]))
 }
