@@ -12,6 +12,8 @@ export {
 
 export { filterPeople, getUniqueCities, getUniqueAges, hasActiveFilters, sortPeople } from '@utils/filterHelpers'
 
+export { getGenderLabel } from '@utils/peopleUtils'
+
 export {
   createPersonSchema,
   createFamilyMemberSchema,
