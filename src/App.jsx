@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from '@components/Layout/Layout'
@@ -11,9 +11,12 @@ import { generatePeople } from '@data/generatePeople'
 function App() {
   const dispatch = useDispatch()
   const peopleCount = useSelector((state) => state.people.items.length)
+  const hasInitialized = useRef(false)
 
   useEffect(() => {
+    if (hasInitialized.current) return
     if (peopleCount === 0) {
+      hasInitialized.current = true
       dispatch(setPeople(generatePeople(25000, { min: 20000, max: 30000 })))
     }
   }, [peopleCount, dispatch])
