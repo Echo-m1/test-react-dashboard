@@ -1,8 +1,9 @@
 import { useSelector } from 'react-redux'
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
-import { selectFilteredPeople, selectFilteredCount } from '@store/selectors/peopleSelectors'
+import { selectFilteredPeople, selectFilteredCount } from '@store/selectors'
 import { formatDate } from '@utils/dateUtils'
 import { getGenderLabel } from '@utils/peopleUtils'
+import PeopleFilters from './PeopleFilters'
 
 const COLUMNS_COUNT = 6
 
@@ -22,6 +23,8 @@ function PeopleList() {
       >
         Картотека
       </Typography>
+
+      <PeopleFilters />
 
       <Typography
         variant="body1"
