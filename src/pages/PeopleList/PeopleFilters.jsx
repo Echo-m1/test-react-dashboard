@@ -12,29 +12,36 @@ import { selectPeopleItems, selectFiltersState } from '@store/selectors'
 import { getUniqueCities, hasActiveFilters } from '@utils/filterHelpers'
 import { GENDER_OPTIONS } from '@utils/constants'
 
-function PeopleFilters() {
+function PeopleFilters({ onFiltersChange }) {
   const dispatch = useDispatch()
   const filters = useSelector(selectFiltersState)
   const allPeople = useSelector(selectPeopleItems)
 
   const cityOptions = useMemo(() => getUniqueCities(allPeople), [allPeople])
 
+  const notifyChange = useCallback(() => {
+    onFiltersChange?.()
+  }, [onFiltersChange])
+
   const handleAgeFromChange = useCallback(
     (e) => {
       const v = e.target.value
       if (v === '') {
         dispatch(setAgeFromFilter(null))
+        notifyChange()
         return
       }
       const num = Number(v)
       if (Number.isNaN(num)) {
         dispatch(setAgeFromFilter(null))
+        notifyChange()
         return
       }
       const age = Math.floor(num)
       dispatch(age >= 0 && age <= 150 ? setAgeFromFilter(age) : setAgeFromFilter(null))
+      notifyChange()
     },
-    [dispatch]
+    [dispatch, notifyChange]
   )
 
   const handleAgeToChange = useCallback(
@@ -42,36 +49,42 @@ function PeopleFilters() {
       const v = e.target.value
       if (v === '') {
         dispatch(setAgeToFilter(null))
+        notifyChange()
         return
       }
       const num = Number(v)
       if (Number.isNaN(num)) {
         dispatch(setAgeToFilter(null))
+        notifyChange()
         return
       }
       const age = Math.floor(num)
       dispatch(age >= 0 && age <= 150 ? setAgeToFilter(age) : setAgeToFilter(null))
+      notifyChange()
     },
-    [dispatch]
+    [dispatch, notifyChange]
   )
 
   const handleCityChange = useCallback(
     (e) => {
       dispatch(setCityFilter(e.target.value ?? ''))
+      notifyChange()
     },
-    [dispatch]
+    [dispatch, notifyChange]
   )
 
   const handleGenderChange = useCallback(
     (e) => {
       dispatch(setGenderFilter(e.target.value ?? ''))
+      notifyChange()
     },
-    [dispatch]
+    [dispatch, notifyChange]
   )
 
   const handleReset = useCallback(() => {
     dispatch(resetFilters())
-  }, [dispatch])
+    notifyChange()
+  }, [dispatch, notifyChange])
 
   const showReset = hasActiveFilters(filters)
 

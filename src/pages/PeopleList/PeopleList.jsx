@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import {
   Box,
@@ -48,6 +48,10 @@ function PeopleList() {
   const maxPage = count > 0 ? Math.max(0, Math.ceil(count / rowsPerPage) - 1) : 0
   const effectivePage = Math.min(page, maxPage)
 
+  const handleFiltersChange = useCallback(() => {
+    setPage(0)
+  }, [])
+
   const paginatedPeople = useMemo(
     () => people.slice(effectivePage * rowsPerPage, effectivePage * rowsPerPage + rowsPerPage),
     [people, effectivePage, rowsPerPage]
@@ -75,7 +79,7 @@ function PeopleList() {
         Картотека
       </Typography>
 
-      <PeopleFilters />
+      <PeopleFilters onFiltersChange={handleFiltersChange} />
 
       <Box
         sx={{
