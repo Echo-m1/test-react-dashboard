@@ -5,12 +5,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useSelector } from 'react-redux'
 import { selectPersonById } from '@store/selectors'
 import { PERSON_CARD_TABS } from './personCardConfig'
-
-function getPersonTitle(person) {
-  if (!person) return ''
-  const parts = [person.lastName, person.firstName, person.middleName].filter(Boolean)
-  return parts.length ? parts.join(' ') : `Карточка #${person.id}`
-}
+import { getPersonTitle } from './personCardUtils'
+import PersonCardSection from './PersonCardSection'
 
 function PersonCard() {
   const { id } = useParams()
@@ -92,11 +88,7 @@ function PersonCard() {
           aria-label="Разделы карточки"
           variant="scrollable"
           scrollButtons="auto"
-          sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-            px: 1,
-          }}
+          sx={{ borderBottom: 1, borderColor: 'divider', px: 1 }}
         >
           {PERSON_CARD_TABS.map((tab, index) => (
             <Tab
@@ -125,34 +117,10 @@ function PersonCard() {
                 size={{ xs: 12 }}
                 key={section.id}
               >
-                <Box
-                  component="section"
-                  aria-labelledby={`section-${section.id}`}
-                  sx={{
-                    p: 2,
-                    borderRadius: 1,
-                    bgcolor: 'action.hover',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                >
-                  <Typography
-                    id={`section-${section.id}`}
-                    variant="subtitle1"
-                    component="h2"
-                    fontWeight={600}
-                    gutterBottom
-                    sx={{ mb: 2 }}
-                  >
-                    {section.title}
-                  </Typography>
-                  <Grid
-                    container
-                    spacing={2}
-                  >
-                    <Grid size={{ xs: 12, sm: 6 }} />
-                  </Grid>
-                </Box>
+                <PersonCardSection
+                  section={section}
+                  person={person}
+                />
               </Grid>
             ))}
           </Grid>
