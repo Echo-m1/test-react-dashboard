@@ -14,12 +14,4 @@ export { filterPeople, getUniqueCities, getUniqueAges, hasActiveFilters, sortPeo
 
 export { getGenderLabel } from '@utils/peopleUtils'
 
-export {
-  createPersonSchema,
-  createFamilyMemberSchema,
-  createEducationSchema,
-  createAddressSchema,
-  createDocumentSchema,
-  createPassportSchema,
-  createRequestSchema,
-} from '@utils/personSchema'
+export { personSchema, validatePerson } from '@utils/personSchema'

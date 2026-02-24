@@ -103,7 +103,7 @@ const INSTITUTIONS = [
 let idCounter = 0
 function nextId() {
   idCounter += 1
-  return `gen-${idCounter}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 11)}`
+  return `gen-${idCounter}-${Math.random().toString(36).slice(2, 12)}`
 }
 
 function pick(arr) {
@@ -132,13 +132,56 @@ function addDays(isoDate, days) {
 
 function generatePhone() {
   const code = pick(['495', '812', '843', '383', '343'])
-  return `+7 (${code}) ${randomInt(100, 999)}-${randomInt(10, 99)}-${randomInt(10, 99)}`
+  const a = randomInt(100, 999)
+  const b = randomInt(10, 99)
+  const c = randomInt(10, 99)
+  return `(${code}) ${a}-${b}-${c}`
 }
 
-function generateEmail(firstName, lastName) {
+const LATIN_NAMES = [
+  'anna',
+  'maria',
+  'elena',
+  'olga',
+  'natalia',
+  'tatiana',
+  'irina',
+  'ekaterina',
+  'svetlana',
+  'yulia',
+  'alexander',
+  'dmitry',
+  'maxim',
+  'ivan',
+  'artem',
+  'mikhail',
+  'nikita',
+  'egor',
+  'andrey',
+  'ilya',
+]
+const LATIN_SURNAMES = [
+  'ivanov',
+  'petrov',
+  'sidorov',
+  'kozlov',
+  'novikov',
+  'morozov',
+  'volkov',
+  'sokolov',
+  'lebedev',
+  'kuznetsov',
+  'popov',
+  'vasiliev',
+  'smirnov',
+  'mikhailov',
+  'fedorov',
+]
+function generateEmail() {
   const domain = pick(['mail.ru', 'yandex.ru', 'gmail.com'])
-  const name = `${(firstName || '').toLowerCase()}.${(lastName || '').toLowerCase()}`.replaceAll(/\s/g, '')
-  return `${name}${randomInt(1, 99)}@${domain}`
+  const name = pick(LATIN_NAMES)
+  const surname = pick(LATIN_SURNAMES)
+  return `${name}.${surname}${randomInt(1, 99)}@${domain}`
 }
 
 function generatePassport(birthDate) {
@@ -199,7 +242,7 @@ function generateAddress(city) {
     street: pick(STREETS),
     building: String(randomInt(1, 120)),
     apartment: String(randomInt(1, 80)),
-    postalCode: randomInt(100000, 199999),
+    postalCode: String(randomInt(100000, 199999)),
     startDate: `${startYear}-01-15`,
     endDate: type === 'temporary' ? addDays(`${startYear}-01-15`, 365) : null,
     isCurrent: type !== 'temporary',
@@ -236,10 +279,6 @@ function generateRequest() {
   }
 }
 
-/**
- * Генерирует одного человека со связанными сущностями.
- * @returns {Object} Объект человека по схеме Person
- */
 function generatePerson() {
   const gender = pick(GENDER_OPTIONS).value
   const isMale = gender === 'male'
@@ -286,12 +325,12 @@ function generatePerson() {
     birthDate,
     gender,
     phone: generatePhone(),
-    email: generateEmail(firstName, lastName),
+    email: generateEmail(),
     city,
     street: pick(STREETS),
     building: String(randomInt(1, 100)),
     apartment: String(randomInt(1, 80)),
-    postalCode: randomInt(100000, 199999),
+    postalCode: String(randomInt(100000, 199999)),
     isMarried: Math.random() > 0.4,
     hasChildren: Math.random() > 0.5,
     isActive: Math.random() > 0.1,
