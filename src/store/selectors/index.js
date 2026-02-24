@@ -4,6 +4,7 @@ export {
   selectSelectedId,
   selectFiltersState,
   selectSelectedPerson,
+  selectPersonById,
   selectFilteredPeople,
   selectFilteredCount,
 } from '@store/selectors/peopleSelectors'
