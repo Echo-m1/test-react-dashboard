@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   Box,
   Typography,
@@ -13,6 +14,7 @@ import {
   TableRow,
 } from '@mui/material'
 import { selectFilteredPeople, selectFilteredCount } from '@store/selectors'
+import { setSelectedId } from '@store/slices/peopleSlice'
 import { formatDate } from '@utils/dateUtils'
 import { getGenderLabel } from '@utils/peopleUtils'
 import PeopleFilters from './PeopleFilters'
@@ -39,6 +41,8 @@ const PAGINATION_SX = {
 }
 
 function PeopleList() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const people = useSelector(selectFilteredPeople)
   const count = useSelector(selectFilteredCount)
 
@@ -65,6 +69,15 @@ function PeopleList() {
     setRowsPerPage(Number.parseInt(e.target.value, 10))
     setPage(0)
   }
+
+  const handleRowClick = useCallback(
+    (personId) => {
+      if (personId == null) return
+      dispatch(setSelectedId(personId))
+      navigate(`/person/${personId}`)
+    },
+    [dispatch, navigate]
+  )
 
   return (
     <Box
@@ -143,6 +156,24 @@ function PeopleList() {
                 <TableRow
                   key={person.id}
                   hover
+                  onClick={() => handleRowClick(person.id)}
+                  sx={{
+                    cursor: 'pointer',
+                    '&:focus-visible': {
+                      outline: '2px solid',
+                      outlineOffset: '-2px',
+                      outlineColor: 'primary.main',
+                      backgroundColor: 'action.hover',
+                    },
+                  }}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleRowClick(person.id)
+                    }
+                  }}
+                  aria-label={`Открыть карточку: ${[person.lastName, person.firstName, person.middleName].filter(Boolean).join(' ') || person.id}`}
                 >
                   <TableCell>{person.lastName ?? ''}</TableCell>
                   <TableCell>{person.firstName ?? ''}</TableCell>
