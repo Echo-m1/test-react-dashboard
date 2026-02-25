@@ -93,6 +93,7 @@ const issuedByCodeRequired = z
   .length(L.issuedByCodeLen, 'Формат: 000-000')
   .regex(/^\d{3}-\d{3}$/, 'Формат: 000-000')
 
+// Строгая схема паспорта (все поля обязательны и валидны)
 export const passportSchema = z.object({
   series: passportSeriesRequired,
   number: passportNumberRequired,
@@ -102,6 +103,35 @@ export const passportSchema = z.object({
   placeOfBirth: requiredString(L.long, 'Обязательное поле'),
   registrationAddress: requiredString(L.note, 'Обязательное поле'),
 })
+
+// Паспорт считается «не указан», если серия и номер пустые (после trim)
+function isPassportEmpty(passport) {
+  if (!passport || typeof passport !== 'object') return true
+  const series = String(passport.series ?? '').trim()
+  const number = String(passport.number ?? '').trim()
+  return series === '' && number === ''
+}
+
+// Схема паспорта в person: либо полный валидный паспорт, либо пустой (все поля могут быть пустыми)
+const passportInPersonSchema = z
+  .object({
+    series: z.string().optional().default(''),
+    number: z.string().optional().default(''),
+    issueDate: z.string().optional().default(''),
+    issuedBy: z.string().optional().default(''),
+    issuedByCode: z.string().optional().default(''),
+    placeOfBirth: z.string().optional().default(''),
+    registrationAddress: z.string().optional().default(''),
+  })
+  .superRefine((val, ctx) => {
+    if (isPassportEmpty(val)) return
+    const result = passportSchema.safeParse(val)
+    if (!result.success) {
+      result.error.issues.forEach((issue) => {
+        ctx.addIssue({ ...issue, path: [...ctx.path, ...issue.path] })
+      })
+    }
+  })
 
 export const requestSchema = z.object({
   id: z.string().trim().max(L.short),
@@ -192,7 +222,7 @@ export const personSchema = z.object({
   education: z.array(educationSchema),
   addresses: z.array(addressSchema),
   documents: z.array(documentSchema),
-  passport: passportSchema,
+  passport: passportInPersonSchema,
   requests: z.array(requestSchema),
   createdAt: z.string().trim().max(L.short),
   updatedAt: z.string().trim().max(L.short),
