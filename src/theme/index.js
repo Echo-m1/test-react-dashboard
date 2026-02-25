@@ -1,6 +1,9 @@
 import { createTheme } from '@mui/material/styles'
 
 const theme = createTheme({
+  shape: {
+    borderRadius: 8,
+  },
   palette: {
     mode: 'light',
     primary: {
@@ -58,6 +61,29 @@ const theme = createTheme({
     button: {
       textTransform: 'none',
       fontWeight: 600,
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: ({ theme: t }) => ({
+          borderRadius: t.shape.borderRadius,
+        }),
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: ({ theme: t }) => ({
+          borderRadius: t.shape.borderRadius,
+        }),
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: ({ theme: t }) => ({
+          borderRadius: t.shape.borderRadius,
+        }),
+      },
     },
   },
 })
