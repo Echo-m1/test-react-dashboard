@@ -3,7 +3,8 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import react from 'eslint-plugin-react'
-import prettierConfig from 'eslint-config-prettier'
+import prettierConfig from 'eslint-config-prettier/flat'
+import prettierPlugin from 'eslint-plugin-prettier'
 
 export default [
   { ignores: ['dist'] },
@@ -23,6 +24,7 @@ export default [
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      prettier: prettierPlugin,
     },
     settings: {
       react: {
@@ -34,10 +36,10 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       ...reactRefresh.configs.vite.rules,
-      
+
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
-      
+
       'react/jsx-max-props-per-line': ['error', { maximum: 1, when: 'multiline' }],
       'react/jsx-first-prop-new-line': ['error', 'multiline'],
       'react/jsx-closing-bracket-location': ['error', 'tag-aligned'],
@@ -53,10 +55,11 @@ export default [
           arrow: 'parens-new-line',
           condition: 'parens-new-line',
           logical: 'parens-new-line',
-          prop: 'parens-new-line',
+          prop: 'ignore',
         },
       ],
-      
+      'prettier/prettier': 'error',
+
       'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
       'react/jsx-boolean-value': ['error', 'never'],
       'react/jsx-no-useless-fragment': ['error', { allowExpressions: true }],
@@ -79,23 +82,14 @@ export default [
         },
       ],
       'react/jsx-no-leaked-render': ['error', { validStrategies: ['ternary'] }],
-      
+
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-debugger': 'warn',
       'prefer-const': 'error',
       'no-var': 'error',
+      'arrow-parens': ['error', 'always'],
     },
   },
   prettierConfig,
-  {
-    files: ['**/*.{js,jsx}'],
-    rules: {
-      'react/jsx-max-props-per-line': ['error', { maximum: 1, when: 'multiline' }],
-      'react/jsx-first-prop-new-line': ['error', 'multiline'],
-      'react/jsx-closing-bracket-location': ['error', 'tag-aligned'],
-      'react/jsx-indent': ['error', 2],
-      'react/jsx-indent-props': ['error', 2],
-    },
-  },
 ]
