@@ -8,7 +8,8 @@ import { L } from '@utils/personSchema'
  *
  * @typedef {'text'|'date'|'select'|'checkbox'|'textarea'} FieldType
  * @typedef {{ path: string, type: FieldType, label: string, optionsKey?: string, required?: boolean, maxLength?: number }} FieldConfig
- * @typedef {{ id: string, title: string, fields?: FieldConfig[] }} SectionConfig
+ * @typedef {{ key: string, label: string, optionsKey?: string }} TableColumnConfig
+ * @typedef {{ id: string, title: string, fields?: FieldConfig[], arrayKey?: string, tableColumns?: TableColumnConfig[], editFields?: FieldConfig[] }} SectionConfig
  * @typedef {{ id: string, label: string, sections: SectionConfig[] }} TabConfig
  */
 
@@ -64,12 +65,67 @@ export const PERSON_CARD_TABS = [
   {
     id: 'family',
     label: 'Семья',
-    sections: [{ id: 'relatives', title: 'Родственники' }],
+    sections: [
+      {
+        id: 'relatives',
+        title: 'Родственники',
+        arrayKey: 'family',
+        tableColumns: [
+          { key: 'relationType', label: 'Тип связи', optionsKey: 'FAMILY_RELATION_TYPES' },
+          { key: 'lastName', label: 'Фамилия' },
+          { key: 'firstName', label: 'Имя' },
+          { key: 'birthDate', label: 'Дата рождения' },
+          { key: 'phone', label: 'Телефон' },
+          { key: 'notes', label: 'Заметки' },
+        ],
+        editFields: [
+          {
+            path: 'relationType',
+            type: 'select',
+            label: 'Тип связи',
+            optionsKey: 'FAMILY_RELATION_TYPES',
+            required: true,
+          },
+          { path: 'lastName', type: 'text', label: 'Фамилия', required: true, maxLength: L.name },
+          { path: 'firstName', type: 'text', label: 'Имя', required: true, maxLength: L.name },
+          { path: 'middleName', type: 'text', label: 'Отчество', maxLength: L.name },
+          { path: 'birthDate', type: 'date', label: 'Дата рождения' },
+          { path: 'phone', type: 'text', label: 'Телефон', maxLength: L.phone },
+          { path: 'notes', type: 'textarea', label: 'Заметки', maxLength: L.note },
+        ],
+      },
+    ],
   },
   {
     id: 'education',
     label: 'Образование',
-    sections: [{ id: 'education-records', title: 'Учебные заведения' }],
+    sections: [
+      {
+        id: 'education-records',
+        title: 'Учебные заведения',
+        arrayKey: 'education',
+        tableColumns: [
+          { key: 'type', label: 'Тип', optionsKey: 'EDUCATION_TYPES' },
+          { key: 'institution', label: 'Учебное заведение' },
+          { key: 'faculty', label: 'Факультет' },
+          { key: 'specialty', label: 'Специальность' },
+          { key: 'startDate', label: 'Начало' },
+          { key: 'endDate', label: 'Окончание' },
+          { key: 'diplomaNumber', label: 'Диплом' },
+        ],
+        editFields: [
+          { path: 'type', type: 'select', label: 'Тип образования', optionsKey: 'EDUCATION_TYPES', required: true },
+          { path: 'institution', type: 'text', label: 'Учебное заведение', required: true, maxLength: L.long },
+          { path: 'faculty', type: 'text', label: 'Факультет', required: true, maxLength: L.long },
+          { path: 'specialty', type: 'text', label: 'Специальность', required: true, maxLength: L.long },
+          { path: 'startDate', type: 'date', label: 'Дата начала' },
+          { path: 'endDate', type: 'date', label: 'Дата окончания' },
+          { path: 'isCompleted', type: 'checkbox', label: 'Завершено' },
+          { path: 'diplomaNumber', type: 'text', label: 'Номер диплома', maxLength: L.short },
+          { path: 'notes', type: 'textarea', label: 'Заметки', maxLength: L.note },
+        ],
+      },
+    ],
   },
   {
     id: 'passport',
@@ -129,6 +185,34 @@ export const PERSON_CARD_TABS = [
   {
     id: 'addresses',
     label: 'Адреса',
-    sections: [{ id: 'address-list', title: 'Адреса регистрации и проживания' }],
+    sections: [
+      {
+        id: 'address-list',
+        title: 'Адреса регистрации и проживания',
+        arrayKey: 'addresses',
+        tableColumns: [
+          { key: 'type', label: 'Тип', optionsKey: 'ADDRESS_TYPES' },
+          { key: 'city', label: 'Город' },
+          { key: 'street', label: 'Улица' },
+          { key: 'building', label: 'Дом' },
+          { key: 'apartment', label: 'Квартира' },
+          { key: 'postalCode', label: 'Индекс' },
+          { key: 'startDate', label: 'С' },
+          { key: 'isCurrent', label: 'Текущий' },
+        ],
+        editFields: [
+          { path: 'type', type: 'select', label: 'Тип адреса', optionsKey: 'ADDRESS_TYPES', required: true },
+          { path: 'city', type: 'text', label: 'Город', required: true, maxLength: L.long },
+          { path: 'street', type: 'text', label: 'Улица', required: true, maxLength: L.long },
+          { path: 'building', type: 'text', label: 'Дом', required: true, maxLength: L.short },
+          { path: 'apartment', type: 'text', label: 'Квартира', required: true, maxLength: L.short },
+          { path: 'postalCode', type: 'text', label: 'Почтовый индекс', maxLength: 20 },
+          { path: 'startDate', type: 'date', label: 'Дата начала' },
+          { path: 'endDate', type: 'date', label: 'Дата окончания' },
+          { path: 'isCurrent', type: 'checkbox', label: 'Текущий адрес' },
+          { path: 'notes', type: 'textarea', label: 'Заметки', maxLength: L.note },
+        ],
+      },
+    ],
   },
 ]

@@ -1,19 +1,47 @@
 import PropTypes from 'prop-types'
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/material'
-import { GENDER_OPTIONS, FAMILY_RELATION_TYPES, EDUCATION_TYPES, ADDRESS_TYPES, DOCUMENT_TYPES } from '@utils/constants'
-
-const OPTIONS_BY_KEY = {
-  GENDER_OPTIONS,
-  FAMILY_RELATION_TYPES,
-  EDUCATION_TYPES,
-  ADDRESS_TYPES,
-  DOCUMENT_TYPES,
-}
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField } from '@mui/material'
+import { OPTIONS_BY_KEY } from '@utils/constants'
 
 function SelectFieldInput({ id, field, localValue, fieldError, handleDebouncedChange, flushSync }) {
   const options =
     field.optionsKey && Object.hasOwn(OPTIONS_BY_KEY, field.optionsKey) ? OPTIONS_BY_KEY[field.optionsKey] : []
   const option = options.find((o) => o.value === localValue)
+  const isRelatedEdit = id.startsWith('related-edit-')
+
+  if (isRelatedEdit) {
+    return (
+      <TextField
+        select
+        id={id}
+        label={field.label}
+        value={localValue ?? ''}
+        onChange={(e) => handleDebouncedChange(field.path, e.target.value)}
+        onBlur={() => flushSync(field.path, localValue ?? '')}
+        fullWidth
+        size="small"
+        required={field.required}
+        error={!!fieldError}
+        helperText={fieldError}
+        slotProps={{
+          htmlInput: { 'aria-label': field.label },
+          label: { shrink: true },
+          select: {
+            displayEmpty: true,
+            renderValue: () => option?.label ?? localValue ?? '',
+          },
+        }}
+      >
+        {options.map((opt) => (
+          <MenuItem
+            key={opt.value}
+            value={opt.value}
+          >
+            {opt.label}
+          </MenuItem>
+        ))}
+      </TextField>
+    )
+  }
 
   return (
     <FormControl

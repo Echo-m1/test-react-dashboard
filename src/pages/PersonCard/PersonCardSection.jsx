@@ -1,9 +1,29 @@
 import PropTypes from 'prop-types'
 import { Box, Typography, Grid } from '@mui/material'
 import PersonCardField from './PersonCardField'
+import PersonCardRelatedSection from './PersonCardRelatedSection'
 
-function PersonCardSection({ section, person, personId, resetKey = 0, fieldErrors = {}, onFieldChange }) {
+function PersonCardSection({
+  section,
+  person,
+  personId,
+  resetKey = 0,
+  fieldErrors = {},
+  onFieldChange,
+  onRelatedArrayChange,
+}) {
   const hasFields = section.fields?.length > 0
+  const hasRelatedTable = section.arrayKey && section.tableColumns?.length > 0
+
+  if (hasRelatedTable) {
+    return (
+      <PersonCardRelatedSection
+        section={section}
+        person={person}
+        onArrayChange={onRelatedArrayChange}
+      />
+    )
+  }
 
   return (
     <Box
@@ -68,10 +88,14 @@ PersonCardSection.propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     fields: PropTypes.arrayOf(PropTypes.object),
+    arrayKey: PropTypes.string,
+    tableColumns: PropTypes.array,
+    editFields: PropTypes.array,
   }).isRequired,
   person: PropTypes.object.isRequired,
   personId: PropTypes.string,
   resetKey: PropTypes.number,
   fieldErrors: PropTypes.object,
   onFieldChange: PropTypes.func,
+  onRelatedArrayChange: PropTypes.func,
 }

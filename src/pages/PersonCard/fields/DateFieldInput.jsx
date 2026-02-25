@@ -17,7 +17,7 @@ function DateFieldInput({ id, field, dateDisplay, localValue, fieldError, handle
       helperText={fieldError}
       slotProps={{
         htmlInput: { 'aria-label': field.label },
-        label: { shrink: true },
+        inputLabel: { shrink: true, sx: { maxWidth: 'calc(100% - 2.5rem)' } },
       }}
     />
   )

@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Typography, Paper, Button, Tabs, Tab, Grid, Alert, Snackbar } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectPersonById } from '@store/selectors'
+import { selectPersonById, selectPeopleInitialized } from '@store/selectors'
 import { setPerson } from '@store/slices/peopleSlice'
+import { ROUTES } from '@utils/routes'
 import { validatePerson } from '@utils/personSchema'
 import { getByPath, setByPath } from '@utils/objectPath'
 import { PERSON_CARD_TABS } from './personCardConfig'
@@ -16,6 +17,7 @@ function PersonCard() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const person = useSelector((state) => selectPersonById(state, id))
+  const initialized = useSelector(selectPeopleInitialized)
   const [tabIndex, setTabIndex] = useState(0)
   const [draft, setDraft] = useState(null)
   const [resetKey, setResetKey] = useState(0)
@@ -62,6 +64,17 @@ function PersonCard() {
     [person, draft]
   )
 
+  const handleRelatedArrayChange = useCallback(
+    (arrayKey, newArray) => {
+      if (!person?.id) return
+      const source = draft ?? person
+      const next = structuredClone(source)
+      next[arrayKey] = newArray
+      setDraft(next)
+    },
+    [person, draft]
+  )
+
   const handleSave = useCallback(() => {
     if (!person?.id) return
     if (!draft) {
@@ -90,7 +103,7 @@ function PersonCard() {
   const handleCloseNoChanges = useCallback(() => setNoChangesOpen(false), [])
 
   const handleBackClick = useCallback(() => {
-    navigate('/people')
+    navigate(ROUTES.PEOPLE)
   }, [navigate])
 
   const handleTabChange = useCallback((_, newValue) => {
@@ -99,7 +112,7 @@ function PersonCard() {
 
   useEffect(() => {
     if (!id?.trim()) {
-      navigate('/people', { replace: true })
+      navigate(ROUTES.PEOPLE, { replace: true })
     }
   }, [id, navigate])
 
@@ -122,12 +135,21 @@ function PersonCard() {
           Назад к картотеке
         </Button>
         <Paper sx={{ p: 3 }}>
-          <Typography
-            variant="body1"
-            color="text.secondary"
-          >
-            Человек с указанным ID не найден.
-          </Typography>
+          {initialized ? (
+            <Typography
+              variant="body1"
+              color="text.secondary"
+            >
+              Человек с указанным ID не найден.
+            </Typography>
+          ) : (
+            <Typography
+              variant="body1"
+              color="text.secondary"
+            >
+              Загрузка…
+            </Typography>
+          )}
         </Paper>
       </Box>
     )
@@ -179,7 +201,7 @@ function PersonCard() {
         <Box
           component="form"
           noValidate
-          sx={{ p: 3 }}
+          sx={{ p: { xs: 2, sm: 3 } }}
           aria-labelledby={`person-tab-${tabIndex}`}
           id={`person-tabpanel-${tabIndex}`}
           role="tabpanel"
@@ -201,6 +223,7 @@ function PersonCard() {
                   resetKey={resetKey}
                   fieldErrors={fieldErrors}
                   onFieldChange={handleFieldChange}
+                  onRelatedArrayChange={handleRelatedArrayChange}
                 />
               </Grid>
             ))}
