@@ -7,9 +7,10 @@ import {
   DOCUMENT_TYPES,
   REQUEST_STATUSES,
 } from '@utils/constants'
+import { getByPath, setByPath } from '@utils/objectPath'
 
-// Константы лимитов (max — длина строк). Для части полей минимум проверяется только при непустом вводе (refine).
-const L = {
+// Константы лимитов (max — длина строк). Экспорт для использования в UI (maxLength).
+export const L = {
   short: 50,
   name: 200,
   phone: 30,
@@ -24,12 +25,25 @@ const L = {
   issuedByCodeLen: 7, // формат 000-000
 }
 
+// Обязательная строка (для полей required в конфиге)
+const requiredString = (maxLen, message = 'Обязательное поле') => z.string().trim().min(1, message).max(maxLen)
+
 // Дата в формате YYYY-MM-DD или пусто; пробелы обрезаются
 const dateString = z
   .string()
   .trim()
   .max(L.short)
-  .refine((val) => !val || /^\d{4}-\d{2}-\d{2}/.test(val), {
+  .refine((val) => !val || /^\d{4}-\d{2}-\d{2}$/.test(val), {
+    message: 'Укажите дату в формате ГГГГ-ММ-ДД',
+  })
+
+// Обязательная дата (не пусто, формат ГГГГ-ММ-ДД)
+const requiredDateString = z
+  .string()
+  .trim()
+  .min(1, 'Обязательное поле')
+  .max(L.short)
+  .refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), {
     message: 'Укажите дату в формате ГГГГ-ММ-ДД',
   })
 
@@ -39,7 +53,7 @@ const optionalDateString = z
   .trim()
   .max(L.short)
   .nullable()
-  .refine((val) => val === null || val === '' || /^\d{4}-\d{2}-\d{2}/.test(String(val)), {
+  .refine((val) => val === null || val === '' || /^\d{4}-\d{2}-\d{2}$/.test(String(val)), {
     message: 'Укажите дату в формате ГГГГ-ММ-ДД',
   })
 
@@ -47,7 +61,11 @@ const postalCode = z.string().trim().max(20).nullable()
 
 const createOptionalEnum = (options) => z.union([z.enum(options.map((o) => o.value)), z.literal('')])
 
-const genderEnum = createOptionalEnum(GENDER_OPTIONS)
+// Пол обязательный (в конфиге required) — пустое значение не допускается
+const genderRequiredEnum = z.enum(
+  GENDER_OPTIONS.map((o) => o.value),
+  { errorMap: () => ({ message: 'Выберите пол' }) }
+)
 const familyRelationEnum = createOptionalEnum(FAMILY_RELATION_TYPES)
 const educationTypeEnum = createOptionalEnum(EDUCATION_TYPES)
 const addressTypeEnum = createOptionalEnum(ADDRESS_TYPES)
@@ -58,37 +76,31 @@ const requestStatusEnum = createOptionalEnum(REQUEST_STATUSES)
 // Пустую строку из формы приводим к undefined перед валидацией (см. validatePerson).
 const emailSchema = z.email({ message: 'Введите корректный email' }).nullish()
 
-// При вводе: пусто — ок; не пусто — проверка формата/длины
-const passportSeriesSchema = z
+// Обязательные поля паспорта (в конфиге required)
+const passportSeriesRequired = z
   .string()
   .trim()
-  .max(L.passportSeries)
-  .refine((v) => !v || (v.length === L.passportSeriesLen && /^\d+$/.test(v)), {
-    message: 'Серия — 4 цифры',
-  })
-const passportNumberSchema = z
+  .length(L.passportSeriesLen, 'Серия — 4 цифры')
+  .regex(/^\d{4}$/, 'Серия — 4 цифры')
+const passportNumberRequired = z
   .string()
   .trim()
-  .max(L.passportNumber)
-  .refine((v) => !v || (v.length === L.passportNumberLen && /^\d+$/.test(v)), {
-    message: 'Номер — 6 цифр',
-  })
-const issuedByCodeSchema = z
+  .length(L.passportNumberLen, 'Номер — 6 цифр')
+  .regex(/^\d{6}$/, 'Номер — 6 цифр')
+const issuedByCodeRequired = z
   .string()
   .trim()
-  .max(L.issuedByCode)
-  .refine((v) => !v || /^\d{3}-\d{3}$/.test(v), {
-    message: 'Формат: 000-000',
-  })
+  .length(L.issuedByCodeLen, 'Формат: 000-000')
+  .regex(/^\d{3}-\d{3}$/, 'Формат: 000-000')
 
 export const passportSchema = z.object({
-  series: passportSeriesSchema,
-  number: passportNumberSchema,
-  issueDate: dateString,
-  issuedBy: z.string().trim().max(L.long),
-  issuedByCode: issuedByCodeSchema,
-  placeOfBirth: z.string().trim().max(L.long),
-  registrationAddress: z.string().trim().max(L.note),
+  series: passportSeriesRequired,
+  number: passportNumberRequired,
+  issueDate: requiredDateString,
+  issuedBy: requiredString(L.long, 'Обязательное поле'),
+  issuedByCode: issuedByCodeRequired,
+  placeOfBirth: requiredString(L.long, 'Обязательное поле'),
+  registrationAddress: requiredString(L.note, 'Обязательное поле'),
 })
 
 export const requestSchema = z.object({
@@ -97,14 +109,24 @@ export const requestSchema = z.object({
   createdAt: z.string().trim().max(L.short),
 })
 
+// При вводе: пусто — ок; не пусто — ровно minPhoneDigits цифр (используется в person и family)
+const phoneSchema = z
+  .string()
+  .trim()
+  .max(L.phone)
+  .nullish()
+  .refine((v) => !v?.trim() || v.replaceAll(/\D/g, '').length === L.minPhoneDigits, {
+    message: `Телефон должен содержать ${L.minPhoneDigits} цифр`,
+  })
+
 export const familyMemberSchema = z.object({
   id: z.string().trim().max(L.short),
   relationType: familyRelationEnum,
   firstName: z.string().trim().max(L.name),
   lastName: z.string().trim().max(L.name),
-  middleName: z.string().trim().max(L.name),
+  middleName: z.string().trim().max(L.name).nullish(),
   birthDate: dateString,
-  phone: z.string().trim().max(L.phone),
+  phone: phoneSchema,
   notes: z.string().trim().max(L.note),
 })
 
@@ -147,29 +169,19 @@ export const documentSchema = z.object({
   notes: z.string().trim().max(L.note),
 })
 
-// При вводе: пусто — ок; не пусто — ровно minPhoneDigits цифр
-const phoneSchema = z
-  .string()
-  .trim()
-  .max(L.phone)
-  .nullish()
-  .refine((v) => !v?.trim() || v.replaceAll(/\D/g, '').length === L.minPhoneDigits, {
-    message: `Телефон должен содержать ${L.minPhoneDigits} цифр`,
-  })
-
 export const personSchema = z.object({
   id: z.string().trim().max(L.short),
-  firstName: z.string().trim().max(L.name),
-  lastName: z.string().trim().max(L.name),
-  middleName: z.string().trim().max(L.name),
-  birthDate: dateString,
-  gender: genderEnum,
+  firstName: requiredString(L.name),
+  lastName: requiredString(L.name),
+  middleName: z.string().trim().max(L.name).nullish(),
+  birthDate: requiredDateString,
+  gender: genderRequiredEnum,
   phone: phoneSchema,
   email: emailSchema,
-  city: z.string().trim().max(L.long),
-  street: z.string().trim().max(L.long),
-  building: z.string().trim().max(L.short),
-  apartment: z.string().trim().max(L.short),
+  city: requiredString(L.long),
+  street: requiredString(L.long),
+  building: requiredString(L.short),
+  apartment: requiredString(L.short),
   postalCode,
   isMarried: z.boolean(),
   hasChildren: z.boolean(),
@@ -186,25 +198,9 @@ export const personSchema = z.object({
   updatedAt: z.string().trim().max(L.short),
 })
 
-// Пути полей, где пустая строка из формы должна трактоваться как undefined (.nullish() в схеме)
+// Пути полей, где пустая строка из формы должна трактоваться как undefined (.nullish() в схеме).
+// При добавлении новых опциональных строк (например телефон в другой сущности) — добавить путь сюда.
 const OPTIONAL_STRING_PATHS = ['email']
-
-function setByPath(obj, pathStr, value) {
-  if (!pathStr || typeof obj !== 'object' || obj == null) return
-  const keys = pathStr.split('.')
-  let current = obj
-  for (let i = 0; i < keys.length - 1; i++) {
-    const key = keys[i]
-    if (current[key] == null) current[key] = {}
-    current = current[key]
-  }
-  current[keys[keys.length - 1]] = value
-}
-
-function getByPath(obj, pathStr) {
-  if (!pathStr || typeof obj !== 'object' || obj == null) return undefined
-  return pathStr.split('.').reduce((acc, key) => acc?.[key], obj)
-}
 
 function normalizeOptionalStrings(person) {
   if (!person || typeof person !== 'object') return person
@@ -221,11 +217,16 @@ function pathToFieldKey(path) {
   return path.join('.')
 }
 
+/**
+ * Валидирует объект человека по personSchema.
+ * При успехе возвращает { success: true, data } — data это нормализованный объект (trim, приведённые типы).
+ * В форме при сохранении нужно передавать в store result.data, а не сырой ввод.
+ */
 export function validatePerson(person) {
   const normalized = normalizeOptionalStrings(person)
   const result = personSchema.safeParse(normalized)
   if (result.success) {
-    return { success: true }
+    return { success: true, data: result.data }
   }
   const errors = {}
   for (const issue of result.error.issues) {
