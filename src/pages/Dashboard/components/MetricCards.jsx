@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { Grid, Card, CardContent, Typography } from '@mui/material'
 
 const METRIC_CARDS = [
@@ -44,6 +45,10 @@ function MetricCards({ aggregates }) {
       ))}
     </>
   )
+}
+
+MetricCards.propTypes = {
+  aggregates: PropTypes.object,
 }
 
 export default MetricCards

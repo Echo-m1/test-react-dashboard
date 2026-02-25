@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material'
 import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import ChartCard, { CHART_HEIGHT } from './ChartCard'
@@ -40,6 +41,10 @@ function GenderDistributionChart({ data }) {
       </ResponsiveContainer>
     </ChartCard>
   )
+}
+
+GenderDistributionChart.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
 }
 
 export default GenderDistributionChart

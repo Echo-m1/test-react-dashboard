@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Box,
@@ -19,12 +20,13 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import PeopleIcon from '@mui/icons-material/People'
+import { ROUTES } from '@utils/routes'
 
 const DRAWER_WIDTH = 240
 
 const menuItems = [
-  { text: 'Dashboard', icon: DashboardIcon, path: '/' },
-  { text: 'Картотека', icon: PeopleIcon, path: '/people' },
+  { text: 'Dashboard', icon: DashboardIcon, path: ROUTES.DASHBOARD },
+  { text: 'Картотека', icon: PeopleIcon, path: ROUTES.PEOPLE },
 ]
 
 function Layout({ children }) {
@@ -145,7 +147,7 @@ function Layout({ children }) {
         sx={{
           flexGrow: 1,
           minWidth: 0,
-          p: 3,
+          p: { xs: 2, sm: 3 },
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
         }}
       >
@@ -154,6 +156,10 @@ function Layout({ children }) {
       </Box>
     </Box>
   )
+}
+
+Layout.propTypes = {
+  children: PropTypes.node,
 }
 
 export default Layout

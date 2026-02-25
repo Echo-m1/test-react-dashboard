@@ -2,8 +2,10 @@ export {
   selectPeopleState,
   selectPeopleItems,
   selectSelectedId,
+  selectPeopleInitialized,
   selectFiltersState,
   selectSelectedPerson,
+  selectPersonById,
   selectFilteredPeople,
   selectFilteredCount,
 } from '@store/selectors/peopleSelectors'

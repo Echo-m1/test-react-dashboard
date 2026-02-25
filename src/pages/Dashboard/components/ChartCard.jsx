@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { Card, CardContent, Grid, Typography } from '@mui/material'
 
 const CARD_SX = { height: '100%', minHeight: 320 }
@@ -33,6 +34,13 @@ function ChartCard({ title, gridSize = { xs: 12, md: 6 }, empty, children }) {
       </Card>
     </Grid>
   )
+}
+
+ChartCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  gridSize: PropTypes.object,
+  empty: PropTypes.bool,
+  children: PropTypes.node,
 }
 
 export default ChartCard

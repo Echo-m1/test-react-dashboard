@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import { selectFilteredPeople, selectFilteredCount } from '@store/selectors'
 import { setSelectedId } from '@store/slices/peopleSlice'
+import { ROUTES } from '@utils/routes'
 import { formatDate } from '@utils/dateUtils'
 import { getGenderLabel } from '@utils/peopleUtils'
 import PeopleFilters from './PeopleFilters'
@@ -74,7 +75,7 @@ function PeopleList() {
     (personId) => {
       if (personId == null) return
       dispatch(setSelectedId(personId))
-      navigate(`/person/${personId}`)
+      navigate(ROUTES.person(personId))
     },
     [dispatch, navigate]
   )

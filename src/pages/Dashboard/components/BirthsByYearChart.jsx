@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import ChartCard, { CHART_HEIGHT } from './ChartCard'
@@ -48,6 +49,10 @@ function BirthsByYearChart({ data }) {
       </ResponsiveContainer>
     </ChartCard>
   )
+}
+
+BirthsByYearChart.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
 }
 
 export default BirthsByYearChart

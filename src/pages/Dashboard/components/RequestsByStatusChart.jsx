@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import PropTypes from 'prop-types'
 import { useTheme } from '@mui/material'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Rectangle } from 'recharts'
 import ChartCard, { CHART_HEIGHT } from './ChartCard'
@@ -67,6 +68,10 @@ function RequestsByStatusChart({ data }) {
       </ResponsiveContainer>
     </ChartCard>
   )
+}
+
+RequestsByStatusChart.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
 }
 
 export default RequestsByStatusChart

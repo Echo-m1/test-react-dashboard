@@ -87,3 +87,12 @@ export const FIELD_LABELS = {
   issuedBy: 'Кем выдан',
   expiryDate: 'Дата окончания действия',
 }
+
+export const OPTIONS_BY_KEY = {
+  GENDER_OPTIONS,
+  FAMILY_RELATION_TYPES,
+  EDUCATION_TYPES,
+  ADDRESS_TYPES,
+  DOCUMENT_TYPES,
+  REQUEST_STATUSES,
+}
