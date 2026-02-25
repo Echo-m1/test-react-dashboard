@@ -2,11 +2,13 @@ import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from '@components/Layout/Layout'
+import ErrorBoundary from '@components/ErrorBoundary/ErrorBoundary'
 import Dashboard from '@pages/Dashboard/Dashboard'
 import PeopleList from '@pages/PeopleList/PeopleList'
 import PersonCard from '@pages/PersonCard/PersonCard'
 import { setPeople } from '@store/slices/peopleSlice'
 import { generatePeople } from '@data/generatePeople'
+import { ROUTES } from '@utils/routes'
 
 function App() {
   const dispatch = useDispatch()
@@ -24,29 +26,31 @@ function App() {
   return (
     <BrowserRouter>
       <Layout>
-        <Routes>
-          <Route
-            path="/"
-            element={<Dashboard />}
-          />
-          <Route
-            path="/people"
-            element={<PeopleList />}
-          />
-          <Route
-            path="/person/:id"
-            element={<PersonCard />}
-          />
-          <Route
-            path="*"
-            element={
-              <Navigate
-                to="/"
-                replace
-              />
-            }
-          />
-        </Routes>
+        <ErrorBoundary>
+          <Routes>
+            <Route
+              path={ROUTES.DASHBOARD}
+              element={<Dashboard />}
+            />
+            <Route
+              path={ROUTES.PEOPLE}
+              element={<PeopleList />}
+            />
+            <Route
+              path={ROUTES.person()}
+              element={<PersonCard />}
+            />
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  to={ROUTES.DASHBOARD}
+                  replace
+                />
+              }
+            />
+          </Routes>
+        </ErrorBoundary>
       </Layout>
     </BrowserRouter>
   )
