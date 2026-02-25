@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import PropTypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux'
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material'
 import {
@@ -184,6 +185,10 @@ function PeopleFilters({ onFiltersChange }) {
       ) : null}
     </Box>
   )
+}
+
+PeopleFilters.propTypes = {
+  onFiltersChange: PropTypes.func,
 }
 
 export default PeopleFilters
