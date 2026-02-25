@@ -6,16 +6,16 @@ import ChartCard, { CHART_HEIGHT } from './ChartCard'
 
 function RequestsByStatusChart({ data }) {
   const theme = useTheme()
-  const textColor = theme.palette.text.primary
+  const textColor = theme.palette.common.white
   const gridColor = theme.palette.divider
   const isEmpty = !data?.length
 
   const barShape = useCallback(
-    (props) => {
-      const fill = data[props.index]?.fill ?? theme.palette.primary.main
+    ({ index, ...rest }) => {
+      const fill = data[index]?.fill ?? theme.palette.primary.main
       return (
         <Rectangle
-          {...props}
+          {...rest}
           fill={fill}
         />
       )
@@ -54,9 +54,15 @@ function RequestsByStatusChart({ data }) {
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: theme.palette.background.paper,
+              backgroundColor: '#020617',
               border: `1px solid ${gridColor}`,
+              color: textColor,
+              boxShadow: '0 16px 40px rgba(15,23,42,0.9)',
+              fontSize: 14,
+              borderRadius: 8,
             }}
+            labelStyle={{ color: theme.palette.primary.main }}
+            itemStyle={{ color: textColor }}
           />
           <Bar
             dataKey="count"

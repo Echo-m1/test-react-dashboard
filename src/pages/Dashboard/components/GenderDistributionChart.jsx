@@ -6,12 +6,13 @@ import ChartCard, { CHART_HEIGHT } from './ChartCard'
 function GenderDistributionChart({ data }) {
   const theme = useTheme()
   const gridColor = theme.palette.divider
+  const textColor = theme.palette.common.white
   const isEmpty = !data?.length
 
   return (
     <ChartCard
       title="Распределение по полу"
-      gridSize={{ xs: 12, md: 6 }}
+      gridSize={{ xs: 12, md: 4, lg: 4 }}
       empty={isEmpty}
     >
       <ResponsiveContainer
@@ -31,10 +32,14 @@ function GenderDistributionChart({ data }) {
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: theme.palette.background.paper,
+              backgroundColor: '#020617',
               border: `1px solid ${gridColor}`,
               fontSize: 14,
+              color: textColor,
+              boxShadow: '0 16px 40px rgba(15,23,42,0.9)',
+              borderRadius: 8,
             }}
+            itemStyle={{ color: textColor }}
           />
           <Legend />
         </PieChart>
