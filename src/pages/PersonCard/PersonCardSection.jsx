@@ -30,11 +30,12 @@ function PersonCardSection({
       component="section"
       aria-labelledby={`section-${section.id}`}
       sx={{
-        p: 2,
-        borderRadius: 1,
-        bgcolor: 'action.hover',
+        p: 2.5,
+        borderRadius: 2,
+        bgcolor: 'background.paper',
         border: '1px solid',
         borderColor: 'divider',
+        boxShadow: '0 10px 30px rgba(15,23,42,0.08)',
       }}
     >
       <Typography

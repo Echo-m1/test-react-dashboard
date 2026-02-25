@@ -20,6 +20,13 @@ function Dashboard() {
       >
         Dashboard
       </Typography>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{ mb: 2 }}
+      >
+        Общая статистика по сотрудникам и заявкам
+      </Typography>
       <Grid
         container
         spacing={3}
