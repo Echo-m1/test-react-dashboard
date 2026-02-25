@@ -2,6 +2,7 @@ export {
   selectPeopleState,
   selectPeopleItems,
   selectSelectedId,
+  selectPeopleInitialized,
   selectFiltersState,
   selectSelectedPerson,
   selectPersonById,

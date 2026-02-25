@@ -3,6 +3,7 @@ import { filterPeople } from '@utils/filterHelpers'
 
 export const selectPeopleState = (state) => state.people
 export const selectPeopleItems = (state) => state.people?.items ?? []
+export const selectPeopleInitialized = (state) => state.people?.initialized ?? false
 export const selectSelectedId = (state) => state.people?.selectedId ?? null
 export const selectFiltersState = (state) => state.filters
 

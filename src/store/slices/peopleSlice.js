@@ -4,6 +4,7 @@ import { setByPath } from '@utils/objectPath'
 const initialState = {
   items: [],
   selectedId: null,
+  initialized: false,
 }
 
 const peopleSlice = createSlice({
@@ -12,6 +13,7 @@ const peopleSlice = createSlice({
   reducers: {
     setPeople: (state, action) => {
       state.items = action.payload
+      state.initialized = true
     },
     setSelectedId: (state, action) => {
       state.selectedId = action.payload
