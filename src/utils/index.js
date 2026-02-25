@@ -15,3 +15,5 @@ export { filterPeople, getUniqueCities, getUniqueAges, hasActiveFilters, sortPeo
 export { getGenderLabel } from '@utils/peopleUtils'
 
 export { personSchema, validatePerson } from '@utils/personSchema'
+
+export { getByPath, setByPath } from '@utils/objectPath'
