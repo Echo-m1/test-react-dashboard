@@ -1,15 +1,10 @@
 /**
- * Работа с путями в объектах (например 'passport.series' или 'firstName').
- * Единый источник для get/set по пути в схеме, store и форме.
- */
-
-/**
  * @param {Object} obj - Объект
  * @param {string} pathStr - Путь через точку
  * @returns {*}
  */
 export function getByPath(obj, pathStr) {
-  if (!pathStr || typeof obj !== 'object' || obj == null) return undefined
+  if (!pathStr || typeof obj !== 'object' || obj == null) return
   return pathStr.split('.').reduce((acc, key) => acc?.[key], obj)
 }
 

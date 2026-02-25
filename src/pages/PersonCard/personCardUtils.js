@@ -1,3 +1,5 @@
+import { getByPath } from '@utils/objectPath'
+
 /**
  * Формирует заголовок карточки (ФИО или «Карточка #id»).
  * @param {Object|null} person - Объект человека
@@ -17,12 +19,7 @@ export function getPersonTitle(person) {
  */
 export function getValue(obj, path) {
   if (!obj || !path) return ''
-  const keys = path.split('.')
-  let value = obj
-  for (const key of keys) {
-    value = value?.[key]
-    if (value === undefined) return ''
-  }
+  const value = getByPath(obj, path)
   if (value === null || value === undefined) return ''
   return value
 }
