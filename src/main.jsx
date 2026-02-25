@@ -7,7 +7,9 @@ import store from '@store'
 import theme from '@theme'
 import '@/index.css'
 import App from '@/App.jsx'
+import * as z from 'zod'
 
+z.config({ locale: z.locales.ru() })
 const root = createRoot(document.getElementById('root'))
 root.render(
   <StrictMode>
