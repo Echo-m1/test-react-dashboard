@@ -1,9 +1,12 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Box, Typography, Paper, Button, Tabs, Tab, Grid } from '@mui/material'
+import { Box, Typography, Paper, Button, Tabs, Tab, Grid, Alert, Snackbar } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { selectPersonById } from '@store/selectors'
+import { setPerson } from '@store/slices/peopleSlice'
+import { validatePerson } from '@utils/personSchema'
+import { getByPath, setByPath } from '@utils/objectPath'
 import { PERSON_CARD_TABS } from './personCardConfig'
 import { getPersonTitle } from './personCardUtils'
 import PersonCardSection from './PersonCardSection'
@@ -11,8 +14,80 @@ import PersonCardSection from './PersonCardSection'
 function PersonCard() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const person = useSelector((state) => selectPersonById(state, id))
   const [tabIndex, setTabIndex] = useState(0)
+  const [draft, setDraft] = useState(null)
+  const [resetKey, setResetKey] = useState(0)
+  const [saveSuccessOpen, setSaveSuccessOpen] = useState(false)
+  const [noChangesOpen, setNoChangesOpen] = useState(false)
+  const formStateRef = useRef(null)
+
+  useEffect(() => {
+    formStateRef.current = draft ?? person
+  }, [draft, person])
+
+  useEffect(() => {
+    if (person?.id == null) return
+    let cancelled = false
+    const t = setTimeout(() => {
+      if (!cancelled) {
+        setDraft(null)
+        setResetKey((k) => k + 1)
+      }
+    }, 0)
+    return () => {
+      cancelled = true
+      clearTimeout(t)
+    }
+  }, [person?.id])
+
+  const formPerson = draft ?? person
+  const fieldErrors = useMemo(() => {
+    if (!formPerson) return {}
+    const result = validatePerson(formPerson)
+    return result.success ? {} : result.errors
+  }, [formPerson])
+
+  const handleFieldChange = useCallback(
+    (path, value) => {
+      if (!person?.id) return
+      const source = draft ?? person
+      const current = getByPath(source, path)
+      if (current === value) return
+      const next = structuredClone(source)
+      setByPath(next, path, value)
+      setDraft(next)
+    },
+    [person, draft]
+  )
+
+  const handleSave = useCallback(() => {
+    if (!person?.id) return
+    if (!draft) {
+      setNoChangesOpen(true)
+      return
+    }
+    // Сбрасываем фокус, чтобы активное поле вызвало onBlur (flush) и обновило draft до сохранения
+    if (typeof document !== 'undefined' && document.activeElement?.blur) {
+      document.activeElement.blur()
+    }
+    const flushDelayMs = 100
+    setTimeout(() => {
+      const latest = formStateRef.current
+      if (!latest) return
+      const result = validatePerson(latest)
+      if (!result.success) return
+      // Сохраняем нормализованные данные (trim, приведённые типы из Zod), а не сырой ввод
+      dispatch(setPerson(result.data))
+      setDraft(null)
+      setResetKey((k) => k + 1)
+      setSaveSuccessOpen(true)
+    }, flushDelayMs)
+  }, [dispatch, person?.id, draft])
+
+  const handleCloseSaveSuccess = useCallback(() => setSaveSuccessOpen(false), [])
+  const handleCloseNoChanges = useCallback(() => setNoChangesOpen(false), [])
 
   const handleBackClick = useCallback(() => {
     navigate('/people')
@@ -60,6 +135,8 @@ function PersonCard() {
 
   const title = getPersonTitle(person)
   const currentTab = PERSON_CARD_TABS[tabIndex]
+  const hasValidationErrors = Object.keys(fieldErrors).length > 0
+  const saveButtonAriaLabel = hasValidationErrors ? 'Исправьте ошибки для сохранения' : 'Сохранить'
 
   return (
     <Box
@@ -110,7 +187,7 @@ function PersonCard() {
           <Grid
             container
             spacing={3}
-            sx={{ flexDirection: 'column' }}
+            direction="column"
           >
             {currentTab.sections.map((section) => (
               <Grid
@@ -119,13 +196,82 @@ function PersonCard() {
               >
                 <PersonCardSection
                   section={section}
-                  person={person}
+                  person={formPerson}
+                  personId={person?.id}
+                  resetKey={resetKey}
+                  fieldErrors={fieldErrors}
+                  onFieldChange={handleFieldChange}
                 />
               </Grid>
             ))}
           </Grid>
+          <Box
+            sx={{
+              mt: 3,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              flexWrap: 'wrap',
+              justifyContent: 'flex-end',
+            }}
+          >
+            {hasValidationErrors ? (
+              <Alert
+                severity="error"
+                sx={{ flex: '1 1 auto', minWidth: 0 }}
+                role="alert"
+                aria-live="polite"
+              >
+                Исправьте ошибки в полях формы перед сохранением.
+              </Alert>
+            ) : null}
+            <Button
+              type="button"
+              variant="contained"
+              disabled={hasValidationErrors}
+              aria-disabled={hasValidationErrors}
+              aria-label={saveButtonAriaLabel}
+              onClick={handleSave}
+            >
+              Сохранить
+            </Button>
+          </Box>
         </Box>
       </Paper>
+      <Snackbar
+        open={saveSuccessOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseSaveSuccess}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        aria-live="polite"
+        aria-label="Данные сохранены"
+      >
+        <Alert
+          onClose={handleCloseSaveSuccess}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Данные сохранены
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={noChangesOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseNoChanges}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        aria-live="polite"
+        aria-label="Нет изменений для сохранения"
+      >
+        <Alert
+          onClose={handleCloseNoChanges}
+          severity="info"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Нет изменений для сохранения
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

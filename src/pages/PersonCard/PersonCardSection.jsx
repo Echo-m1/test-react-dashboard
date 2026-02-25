@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { Box, Typography, Grid } from '@mui/material'
 import PersonCardField from './PersonCardField'
 
-function PersonCardSection({ section, person }) {
+function PersonCardSection({ section, person, personId, resetKey = 0, fieldErrors = {}, onFieldChange }) {
   const hasFields = section.fields?.length > 0
 
   return (
@@ -38,8 +38,11 @@ function PersonCardSection({ section, person }) {
               key={field.path}
             >
               <PersonCardField
+                key={`${personId ?? 'no-person'}-${field.path}-${resetKey}`}
                 person={person}
                 field={field}
+                fieldError={fieldErrors[field.path]}
+                onFieldChange={onFieldChange}
               />
             </Grid>
           ))
@@ -67,4 +70,8 @@ PersonCardSection.propTypes = {
     fields: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
   person: PropTypes.object.isRequired,
+  personId: PropTypes.string,
+  resetKey: PropTypes.number,
+  fieldErrors: PropTypes.object,
+  onFieldChange: PropTypes.func,
 }
